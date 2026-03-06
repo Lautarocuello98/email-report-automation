@@ -1,6 +1,7 @@
 import pytest
 
-from email_sender import _load_smtp_settings, log_email_result
+from email_report_automation.config import load_smtp_settings
+from email_report_automation.email_sender import log_email_result
 
 
 def _set_base_env(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -15,7 +16,7 @@ def test_load_smtp_settings_with_defaults(monkeypatch: pytest.MonkeyPatch) -> No
     monkeypatch.delenv("SMTP_USE_STARTTLS", raising=False)
     monkeypatch.delenv("SMTP_TIMEOUT_SECONDS", raising=False)
 
-    settings = _load_smtp_settings()
+    settings = load_smtp_settings()
 
     assert settings.sender_email == "sender@example.com"
     assert settings.server == "smtp.example.com"
@@ -29,7 +30,7 @@ def test_load_smtp_settings_rejects_invalid_port(monkeypatch: pytest.MonkeyPatch
     monkeypatch.setenv("SMTP_PORT", "not-a-number")
 
     with pytest.raises(ValueError, match="SMTP_PORT must be a valid integer"):
-        _load_smtp_settings()
+        load_smtp_settings()
 
 
 def test_load_smtp_settings_requires_all_values(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -39,7 +40,7 @@ def test_load_smtp_settings_requires_all_values(monkeypatch: pytest.MonkeyPatch)
     monkeypatch.delenv("SMTP_PORT", raising=False)
 
     with pytest.raises(ValueError, match="Missing email configuration"):
-        _load_smtp_settings()
+        load_smtp_settings()
 
 
 def test_log_email_result_creates_parent_folder(local_tmp_dir) -> None:

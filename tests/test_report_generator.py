@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from report_generator import _slugify, generate_report, load_email_template
+from email_report_automation.report_generator import _slugify, generate_report, load_email_template
 
 
 def test_slugify_removes_unsafe_characters() -> None:

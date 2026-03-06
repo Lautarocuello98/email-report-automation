@@ -48,3 +48,6 @@ output/reports/*
 .vscode/
 .DS_Store
 Thumbs.db
+.tmp
+.logs
+logs/

@@ -4,7 +4,8 @@
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)  
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)  
-[![Tests: pytest](https://img.shields.io/badge/tests-pytest-green.svg)](#-tests)
+[![Tests: pytest](https://img.shields.io/badge/tests-pytest-green.svg)](#-tests)  
+[![CI](https://github.com/Lautarocuello98/email-report-automation/actions/workflows/ci.yml/badge.svg)](https://github.com/Lautarocuello98/email-report-automation/actions/workflows/ci.yml)
 
 ---
 
@@ -39,6 +40,7 @@ Move into the project directory:
 Install dependencies:
 
     pip install -r requirements.txt
+    pip install -r requirements-dev.txt
 
 Run the application in dry-run mode (recommended for testing):
 
@@ -93,40 +95,62 @@ The generated report typically includes:
 | Dry-run mode | Simulate execution without sending emails |
 | Logging | Execution results stored in a log file |
 | Tests | Automated testing with pytest |
+| CI pipeline | GitHub Actions runs tests on push and pull requests |
 
 ---
 
 ## 🏗 Architecture
 
-Execution pipeline:
+Current execution pipeline:
 
-    main.py
-      → report_generator.py   (Excel report generation)
-      → email_sender.py       (SMTP email delivery)
+    main.py (wrapper/entrypoint)
+      -> src/email_report_automation/cli.py
+      -> src/email_report_automation/workflow.py
+           -> validation.py
+           -> report_generator.py
+           -> email_sender.py
+           -> config.py
 
 Module responsibilities:
 
 main.py
 
-- CLI argument parsing
-- workflow orchestration
-- input validation
-- execution summary
-- error handling
+- compatibility wrapper that runs the package CLI
 
-report_generator.py
+src/email_report_automation/cli.py
+
+- CLI argument parsing
+- `.env` loading
+- workflow trigger
+
+src/email_report_automation/workflow.py
+
+- workflow orchestration
+- execution summary
+- runtime error handling
+
+src/email_report_automation/validation.py
+
+- CSV row validation
+- sales normalization
+
+src/email_report_automation/report_generator.py
 
 - loads email template
 - generates Excel reports
 - handles report filenames
 
-email_sender.py
+src/email_report_automation/email_sender.py
 
-- loads SMTP configuration from environment variables
 - sends emails with attachments
 - logs execution results
 
-This modular structure improves readability, maintainability, and testability.
+src/email_report_automation/config.py
+
+- loads environment configuration
+- validates and provides typed SMTP settings
+
+This structure keeps responsibilities explicit and improves readability, maintainability, and testability.
 
 ---
 
@@ -134,35 +158,48 @@ This modular structure improves readability, maintainability, and testability.
 
     email-report-automation/
     |
-    ├── main.py
-    ├── report_generator.py
-    ├── email_sender.py
-    ├── requirements.txt
-    ├── requirements-dev.txt
-    ├── pytest.ini
-    ├── README.md
-    ├── LICENSE
+    |-- main.py
+    |-- requirements.txt
+    |-- requirements-dev.txt
+    |-- pytest.ini
+    |-- README.md
+    |-- LICENSE
     |
-    ├── data/
-    │   └── clients.csv
+    |-- .github/
+    |   `-- workflows/
+    |       `-- ci.yml
     |
-    ├── templates/
-    │   └── email_template.txt
+    |-- src/
+    |   `-- email_report_automation/
+    |       |-- __init__.py
+    |       |-- __main__.py
+    |       |-- cli.py
+    |       |-- workflow.py
+    |       |-- validation.py
+    |       |-- report_generator.py
+    |       |-- email_sender.py
+    |       `-- config.py
     |
-    ├── output/
-    │   └── reports/
-    │       └── .gitkeep
+    |-- data/
+    |   `-- clients.csv
     |
-    ├── logs/
-    │   └── .gitkeep
+    |-- templates/
+    |   `-- email_template.txt
     |
-    ├── tests/
-    │   ├── conftest.py
-    │   ├── test_email_sender.py
-    │   ├── test_main_validation.py
-    │   └── test_report_generator.py
+    |-- output/
+    |   `-- reports/
+    |       `-- .gitkeep
     |
-    └── images/
+    |-- logs/
+    |   `-- .gitkeep
+    |
+    |-- tests/
+    |   |-- conftest.py
+    |   |-- test_email_sender.py
+    |   |-- test_main_validation.py
+    |   `-- test_report_generator.py
+    |
+    `-- images/
 
 ---
 
@@ -206,7 +243,11 @@ Display CLI help:
 
 Override default paths:
 
-    python main.py --data-file data/clients.csv --template-file templates/email_template.txt --output-dir output/reports --log-file logs/email_log.txt
+    python main.py --data-file data/clients.csv --template-file templates/email_template.txt --output-dir output/reports --log-file logs/email_log.txt --env-file .env
+
+Optional package execution mode (PowerShell):
+
+    $env:PYTHONPATH='src'; python -m email_report_automation --dry-run
 
 ---
 
@@ -221,10 +262,15 @@ The test coverage includes:
 - CSV row validation
 - sales normalization
 - report filename sanitization
-- template loadingc
+- template loading
 - Excel report generation
 - SMTP configuration validation
 - logging behavior
+
+Continuous Integration:
+
+- `.github/workflows/ci.yml` runs tests on every push and pull request
+- test matrix: Python 3.10, 3.11, and 3.12
 
 ---
 

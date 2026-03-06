@@ -100,56 +100,82 @@ The generated report typically includes:
 
 ## 🏗 Architecture
 
+### Execution Flow
+
+```mermaid
+flowchart TD
+    A[CSV Input] --> B[Validation]
+    B --> C[Excel Report Generator]
+    C --> D[Email Template Rendering]
+    D --> E[SMTP Sender]
+```
+
+The system processes client data through a simple automation pipeline:
+
+1. **CSV ingestion** – load client data from a structured CSV file  
+2. **Validation** – verify required fields and normalize values  
+3. **Report generation** – create an Excel report for each client  
+4. **Email rendering** – build personalized email content from a template  
+5. **SMTP delivery** – send the report as an email attachment
+
+Each stage is handled by a dedicated module to keep responsibilities isolated and maintainable.
+
+---
+
+### Execution Pipeline
+
 Current execution pipeline:
 
     main.py (wrapper/entrypoint)
-      -> src/email_report_automation/cli.py
-      -> src/email_report_automation/workflow.py
-           -> validation.py
-           -> report_generator.py
-           -> email_sender.py
-           -> config.py
+        -> src/email_report_automation/cli.py
+        -> src/email_report_automation/workflow.py
+            -> validation.py
+            -> report_generator.py
+            -> email_sender.py
+            -> config.py
 
-Module responsibilities:
+---
 
-main.py
+### Module Responsibilities
+
+**main.py**
 
 - compatibility wrapper that runs the package CLI
 
-src/email_report_automation/cli.py
+**src/email_report_automation/cli.py**
 
 - CLI argument parsing
 - `.env` loading
 - workflow trigger
 
-src/email_report_automation/workflow.py
+**src/email_report_automation/workflow.py**
 
 - workflow orchestration
 - execution summary
 - runtime error handling
 
-src/email_report_automation/validation.py
+**src/email_report_automation/validation.py**
 
 - CSV row validation
 - sales normalization
 
-src/email_report_automation/report_generator.py
+**src/email_report_automation/report_generator.py**
 
 - loads email template
 - generates Excel reports
 - handles report filenames
 
-src/email_report_automation/email_sender.py
+**src/email_report_automation/email_sender.py**
 
 - sends emails with attachments
 - logs execution results
 
-src/email_report_automation/config.py
+**src/email_report_automation/config.py**
 
 - loads environment configuration
 - validates and provides typed SMTP settings
 
-This structure keeps responsibilities explicit and improves readability, maintainability, and testability.
+This modular design improves **readability, maintainability, and testability** while keeping the automation pipeline explicit.
 
 ---
 

@@ -1,0 +1,8 @@
+Hello {name},
+
+Please find attached your sales report.
+
+Total sales: {sales}
+
+Best regards,
+Lautaro Cuello

@@ -158,6 +158,8 @@ This structure keeps responsibilities explicit and improves readability, maintai
 
     email-report-automation/
     |
+    |-- .gitignore
+    |-- .env.example
     |-- main.py
     |-- requirements.txt
     |-- requirements-dev.txt
@@ -185,13 +187,6 @@ This structure keeps responsibilities explicit and improves readability, maintai
     |
     |-- templates/
     |   `-- email_template.txt
-    |
-    |-- output/
-    |   `-- reports/
-    |       `-- .gitkeep
-    |
-    |-- logs/
-    |   `-- .gitkeep
     |
     |-- tests/
     |   |-- conftest.py

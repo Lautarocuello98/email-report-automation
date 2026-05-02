@@ -1,8 +1,10 @@
 Hello {name},
 
-Please find attached your sales report.
+Attached is your personalized sales report for {reporting_period}.
 
-Total sales: {sales}
+This period's total sales are {total_sales}. The attached report includes your account details and current status for review.
+
+Please let me know if you need any clarification.
 
 Best regards,
 Lautaro Cuello

@@ -1,6 +1,6 @@
-name,email,sales
-John Doe,john@example.com,1200
-Anna Smith,anna@example.com,950
-Mark Lee,mark@example.com,1575
-Lautaro Cuello,lac1998123@gmail.com,2000
-Liliana Tijera,lilianatijera26@gmail.com,3450
+name,email,region,reporting_period,total_sales,order_count,status
+John Doe,john@example.com,North America,Q1 2026,18450.75,42,Active
+Anna Smith,anna@example.com,Europe,Q1 2026,12980.40,31,Active
+Mark Lee,mark@example.com,Asia-Pacific,Q1 2026,22110.10,54,Pending Review
+Lautaro Cuello,lac1998123@gmail.com,Latin America,Q1 2026,30540.90,67,Priority
+Liliana Tijera,lilianatijera26@gmail.com,Latin America,Q1 2026,27890.55,59,Active

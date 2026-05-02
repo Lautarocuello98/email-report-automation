@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from .email_sender import log_email_result, send_email
-from .report_generator import generate_report, load_email_template
+from .report_generator import format_currency, generate_report, load_email_template
 from .validation import REQUIRED_COLUMNS, validate_row
 
 
@@ -53,7 +53,10 @@ def run_workflow(
     for row_index, row in df.iterrows():
         csv_line = row_index + 2
         try:
-            name, email, sales = validate_row(row=row, csv_line=csv_line)
+            name, email, region, reporting_period, total_sales, order_count, status = validate_row(
+                row=row,
+                csv_line=csv_line,
+            )
         except ValueError as exc:
             skipped_count += 1
             log_email_result(log_file, f"row-{csv_line}", f"SKIPPED - {exc}")
@@ -64,11 +67,19 @@ def run_workflow(
             report_path = generate_report(
                 name=name,
                 email=email,
-                sales=sales,
+                region=region,
+                reporting_period=reporting_period,
+                total_sales=total_sales,
+                order_count=order_count,
+                status=status,
                 output_dir=output_dir,
             )
-            formatted_sales = f"{sales:,.2f}"
-            email_body = template.format(name=name, sales=formatted_sales)
+            formatted_total_sales = format_currency(total_sales)
+            email_body = template.format(
+                name=name,
+                reporting_period=reporting_period,
+                total_sales=formatted_total_sales,
+            )
 
             if dry_run:
                 log_email_result(log_file, email, "DRY_RUN - EMAIL_NOT_SENT")
@@ -76,7 +87,7 @@ def run_workflow(
             else:
                 send_email(
                     recipient=email,
-                    subject=f"Sales Report for {name}",
+                    subject=f"Client Sales Report | {reporting_period}",
                     body=email_body,
                     attachment_path=report_path,
                 )
